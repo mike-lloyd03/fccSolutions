@@ -1,0 +1,16 @@
+function palindrome(str) {
+  // Good luck!
+  let strippedStr = str.split(/\W|_/)
+                        .join('')
+                        .toLowerCase();
+  
+  let halfWidth = Math.floor(strippedStr.length/2);
+  
+  return strippedStr.substr(0,halfWidth) == strippedStr.substr(-halfWidth).split('').reverse().join('');
+}
+
+
+
+console.log(palindrome("race car"));
+
+console.log('abccba'.substr(-3));

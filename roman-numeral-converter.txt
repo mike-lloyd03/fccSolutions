@@ -1,0 +1,23 @@
+function convertToRoman(num) {
+    let nThousands = Math.floor(num/1000);
+    let nHundreds = Math.floor((num-nThousands*1000)/100);
+    let nTens = Math.floor((num-nThousands*1000-nHundreds*100)/10);
+    let nOnes = num-nThousands*1000-nHundreds*100-nTens*10;
+
+    function romanizer(n, [a, b, c]){
+    let romArray = ['', 'a', 'aa', 'aaa',
+                    'ab', 'b', 'ba',
+                    'baa', 'baaa', 'ac'];
+    return romArray[n].replace(/a/g,a)
+                        .replace(/b/g,b)
+                        .replace(/c/, c); 
+    }
+
+ return romanizer(nThousands, ['M', '', '']) + 
+        romanizer(nHundreds, ['C', 'D', 'M']) +
+        romanizer(nTens, ['X','L', 'C']) +
+        romanizer(nOnes, ['I','V','X']);
+}
+
+console.log(convertToRoman(798));
+
