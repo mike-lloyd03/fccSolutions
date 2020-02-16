@@ -1,0 +1,42 @@
+function checkCashRegister(price, cash, cid) {
+  var change = cash - price;
+
+  function changemaker(change) {
+    const denomArr = [
+      [100, 20, 10, 5, 1, .25, .1, .05, .01],
+      ['ONE HUNDRED', 'TWENTY', 'TEN', 'FIVE', 'DOLLAR', 'QUARTER', 'DIME', 'NICKEL', 'PENNY']
+    ];
+    let changeArr = [];
+    let denomVal;
+    let nDenoms;
+
+    while (change >= .01) {
+      denomVal = denomArr[0].find(a => a <= change);
+      nDenoms = Math.floor(change / denomVal);
+      changeArr.push([denomArr[1][denomArr[0].indexOf(denomVal)], nDenoms * denomVal]);
+      change = change - nDenoms * denomVal;
+    }
+
+    return changeArr;
+  }
+
+  // Here is your change, ma'am.
+  return change;
+}
+
+// Example cash-in-drawer array:
+// [["PENNY", 1.01],
+// ["NICKEL", 2.05],
+// ["DIME", 3.1],
+// ["QUARTER", 4.25],
+// ["ONE", 90],
+// ["FIVE", 55],
+// ["TEN", 20],
+// ["TWENTY", 60],
+// ["ONE HUNDRED", 100]]
+
+checkCashRegister(19.5, 20, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], ["QUARTER", 4.25], ["ONE", 90], ["FIVE", 55], ["TEN", 20], ["TWENTY", 60], ["ONE HUNDRED", 100]]);
+
+
+let testArr = [['a', 'b'], ['c', 'd']];
+console.log(testArr.flat())
