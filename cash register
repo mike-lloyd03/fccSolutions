@@ -1,27 +1,58 @@
 function checkCashRegister(price, cash, cid) {
-  var change = cash - price;
+  let change = cash - price;
+  let cidTotal = cid.reduce(((a, b) => a + b[1]), 0);
+  cidTotal = Math.round(cidTotal * 100) / 100;
 
-  function changemaker(change) {
-    const denomArr = [
-      [100, 20, 10, 5, 1, .25, .1, .05, .01],
-      ['ONE HUNDRED', 'TWENTY', 'TEN', 'FIVE', 'DOLLAR', 'QUARTER', 'DIME', 'NICKEL', 'PENNY']
-    ];
-    let changeArr = [];
-    let denomVal;
-    let nDenoms;
-
-    while (change >= .01) {
-      denomVal = denomArr[0].find(a => a <= change);
-      nDenoms = Math.floor(change / denomVal);
-      changeArr.push([denomArr[1][denomArr[0].indexOf(denomVal)], nDenoms * denomVal]);
-      change = change - nDenoms * denomVal;
-    }
-
-    return changeArr;
+  if (change > cidTotal) {
+    return { status: "INSUFFICIENT_FUNDS", change: [] };
+  }
+  else if (change == cidTotal) {
+    return { status: "CLOSED", change: cid }
   }
 
+  let denomArr = [
+    [100, 20, 10, 5, 1, .25, .1, .05, .01],
+    ['ONE HUNDRED', 'TWENTY', 'TEN', 'FIVE', 'DOLLAR', 'QUARTER', 'DIME', 'NICKEL', 'PENNY']
+  ];
+  let changeArr = [];
+
+  while (change >= .01) {
+    let denomVal = denomArr[0].find(a => a <= change);
+    let nDenoms = Math.floor(change / denomVal);
+    let cidDenom = cid.reverse().find(a => a[0] == denomArr[1][denomArr[0].indexOf(denomVal)]);
+
+
+    if (nDenoms * denomVal <= cidDenom[1]) {
+      changeArr.push([denomArr[1][denomArr[0].indexOf(denomVal)], nDenoms * denomVal]);
+      change = change - nDenoms * denomVal;
+      //console.log(change);
+    }
+    else if (cidDenom[1] != 0) {
+      changeArr.push([denomArr[1][denomArr[0].indexOf(denomVal)], cidDenom[1]]);
+      change = change - cidDenom[1];
+      //console.log(change);
+    }
+    else {
+      denomArr[0].splice(denomArr[0].indexOf(denomVal));
+      denomArr[1].splice(denomArr[1].indexOf(denomVal));
+    }
+    
+  }
+
+  change = changeArr;
+
+  // let cidDenom = cid.find(a => a[0] == change[0][0]);
+  // for (let i = 0; i < change.length; i++) {
+  //   if (change[i][1] <= cidDenom[1]) {
+  //     continue;
+  //   }
+  //   else {
+
+  //   }
+  // }
+
   // Here is your change, ma'am.
-  return change;
+  return { status: "OPEN", change: change };
 }
 
 // Example cash-in-drawer array:
@@ -35,8 +66,4 @@ function checkCashRegister(price, cash, cid) {
 // ["TWENTY", 60],
 // ["ONE HUNDRED", 100]]
 
-checkCashRegister(19.5, 20, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], ["QUARTER", 4.25], ["ONE", 90], ["FIVE", 55], ["TEN", 20], ["TWENTY", 60], ["ONE HUNDRED", 100]]);
-
-
-let testArr = [['a', 'b'], ['c', 'd']];
-console.log(testArr.flat())
+console.log(checkCashRegister(3.26, 100, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], ["QUARTER", 4.25], ["ONE", 90], ["FIVE", 55], ["TEN", 20], ["TWENTY", 60], ["ONE HUNDRED", 100]]));
