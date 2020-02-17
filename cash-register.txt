@@ -1,0 +1,56 @@
+function checkCashRegister(price, cash, cid) {
+  let change = cash - price;
+  let cidTotal = cid.reduce(((a, b) => a + b[1]), 0);
+  cidTotal = Math.round(cidTotal * 100) / 100;
+
+  //If there's not enough change in the drawer, return
+  //"INSUFFICIENT_FUNDS" or if there's the exact amount,
+  //return the cid and close the register
+  if (change > cidTotal) {
+    return { status: "INSUFFICIENT_FUNDS", change: [] };
+  }
+  else if (change == cidTotal) {
+    return { status: "CLOSED", change: cid }
+  }
+
+  //Append denomination values to each array element and
+  //strip out any array elements with zero value
+  let cidReorder = [...cid]
+  const cidDenomVals = [100, 20, 10, 5, 1, .25, .1, .05, .01];
+  cidReorder
+    .reverse()
+    .map((a, b) => a.push(cidDenomVals[b]));
+  cidReorder = cidReorder.filter(a => a[1] != 0)
+
+  //Do math
+  let changeArr = [];
+
+  while (change >= .01) {
+    
+    let denomVal = cidReorder
+      .find(a => a[2] <= change);
+    let denomAmt;
+    try {
+      denomAmt = change < denomVal[1] ?
+        Math.floor(change / denomVal[2]) * denomVal[2] :
+        denomVal[1];
+    }
+    catch {
+      break;
+    }
+    cidReorder.splice(cidReorder.indexOf(denomVal), 1);
+    changeArr.push([denomVal[0], denomAmt]);
+    change = Math.round((change - denomAmt) * 100) / 100;
+  }
+
+  change = changeArr;
+  // Here is your change, ma'am.
+  if (change.reduce(((a, b) => a + b[1]), 0) < cash - price) {
+    return { status: "INSUFFICIENT_FUNDS", change: [] }
+  }
+  else return { status: "OPEN", change: change };
+}
+
+let test = checkCashRegister(19.5, 20, [["PENNY", 0.01], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 1], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]]);
+
+console.log(test);
